@@ -1,0 +1,34 @@
+# Start from ROS base image
+FROM osrf/ros:noetic-desktop-focal
+
+# Set the working directory
+WORKDIR /
+
+# Make a catkin workspace
+RUN mkdir -p /catkin_ws/src
+
+# Change the default shell to Bash
+SHELL ["/bin/bash", "-c"]
+
+# Install necessary dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    build-essential \
+    && sudo apt-get install -y ros-noetic-slam-gmapping
+
+# Create a volume for ROS packages
+COPY ./tortoisebot/tortoisebot_slam /catkin_ws/src/tortoisebot_slam
+COPY ./tortoisebot/tortoisebot_description /catkin_ws/src/tortoisebot_description
+COPY ./tortoisebot/tortoisebot_navigation /catkin_ws/src/tortoisebot_navigation
+
+
+# Build the Catkin workspace
+RUN source /opt/ros/noetic/setup.bash \
+    && cd /catkin_ws \
+    && catkin_make
+
+# Ensure the workspace is sourced
+RUN echo "source /catkin_ws/devel/setup.bash" >> ~/.bashrc
+
+# Set the entry point to start the ROS launch file
+ENTRYPOINT ["/bin/bash", "-c","source /opt/ros/noetic/setup.bash && source /catkin_ws/devel/setup.bash && sleep 15 && roslaunch tortoisebot_slam mapping.launch"]

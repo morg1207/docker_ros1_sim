@@ -1,0 +1,85 @@
+version: "3.7"
+
+services:
+  tortoisebot-roscore:
+    image: osrf/ros:noetic-desktop-full-focal
+    container_name: tortoisebot-roscore
+    hostname: roscore_host
+    command: roscore
+    environment:
+      - ROS_HOSTNAME=roscore_host
+    networks:
+      - rosnet
+    expose:
+      - "11311"
+
+  tortoisebot-ros1-gazebo:
+    image: tortoisebot-ros1-gazebo
+    container_name: tortoisebot-ros1-gazebo_1
+    build: 
+      context: .
+      dockerfile: tortoisebot_ros1_gazebo
+    environment:
+      - DISPLAY
+      - ROS_MASTER_URI=http://tortoisebot-roscore:11311
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    networks:
+      - rosnet
+    depends_on:
+      - tortoisebot-roscore
+    restart: "always" 
+
+  tortoisebot-ros1-slam:
+    image: tortoisebot-ros1-slam
+    container_name: tortoisebot-ros1-slam_1
+    build: 
+      context: .
+      dockerfile: tortoisebot_ros1_slam
+    environment:
+      - DISPLAY
+      - ROS_MASTER_URI=http://tortoisebot-roscore:11311
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    networks:
+      - rosnet
+    depends_on:
+      - tortoisebot-roscore
+    restart: "always"
+
+  tortoisebot_waypoints:
+    image: tortoisebot-ros1-waypoints
+    container_name: tortoisebot-ros1-waypoints_1
+    build: 
+      context: . 
+      dockerfile: tortoisebot_ros1_waypoints
+    environment:
+      - DISPLAY
+      - ROS_MASTER_URI=http://tortoisebot-roscore:11311
+    networks:
+      - rosnet
+    depends_on:
+      - tortoisebot-roscore
+    restart: "always"  
+
+  tortoisebot_webapp:
+    image: tortoisebot-ros1-webapp
+    container_name: tortoisebot-ros1-webapp_1
+    build: 
+      context: . 
+      dockerfile: tortoisebot_ros1_webapp
+    environment:
+      - DISPLAY
+      - ROS_MASTER_URI=http://tortoisebot-roscore:11311
+    networks:
+      - rosnet
+    depends_on:
+      - tortoisebot-roscore
+    ports:
+      - "7000:7000"
+      - "9090:9090"
+      - "11315:11315"
+      
+networks:
+  rosnet:
+    driver: bridge

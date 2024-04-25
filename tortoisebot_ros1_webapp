@@ -1,0 +1,47 @@
+# Start from ROS base image
+FROM osrf/ros:noetic-desktop-focal
+
+# Set the working directory
+WORKDIR /
+
+# Make a catkin workspace
+RUN mkdir -p /catkin_ws/src
+
+# Change the default shell to Bash
+SHELL ["/bin/bash", "-c"]
+
+# Install necessary dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    ros-$ROS_DISTRO-rosbridge-server \
+    ros-$ROS_DISTRO-slam-gmapping \
+    ros-$ROS_DISTRO-gmapping \
+    && apt-get autoremove -y \
+    && apt-get clean \
+    && apt-get install -y python3 \
+    && ln -s /usr/bin/python3 /usr/bin/python
+
+# Create a volume for ROS packages
+COPY ./tortoisebot/course_web_dev_ros /catkin_ws/src/course_web_dev_ros
+COPY ./tortoisebot/web_video_server /catkin_ws/src/web_video_server
+COPY ./tortoisebot/async_web_server_cpp /catkin_ws/src/async_web_server_cpp
+COPY ./tortoisebot/tf2_web_publisher /catkin_ws/src/tf2_web_publisher
+
+COPY ./webpage_ws /catkin_ws/src/webpage_ws
+COPY webapp_entrypoint.sh /
+
+# Build the Catkin workspace
+RUN source /opt/ros/noetic/setup.bash \
+    && cd /catkin_ws \
+    && catkin_make
+
+ENV SLOT_ROSBRIDGE_PORT=20001
+
+# Ensure the workspace is sourced
+RUN echo "source /opt/ros/noetic/setup.bash && source /catkin_ws/devel/setup.bash" >> ~/.bashrc
+
+# Set the working directory
+WORKDIR /
+
+# Set the entry point to start the ROS launch file
+ENTRYPOINT ["/bin/bash", "-c","source webapp_entrypoint.sh"]
