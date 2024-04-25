@@ -28,7 +28,7 @@ COPY ./tortoisebot/async_web_server_cpp /catkin_ws/src/async_web_server_cpp
 COPY ./tortoisebot/tf2_web_publisher /catkin_ws/src/tf2_web_publisher
 
 COPY ./webpage_ws /catkin_ws/src/webpage_ws
-COPY webapp_entrypoint.sh /
+COPY ./entrypoints /entrypoints
 
 # Build the Catkin workspace
 RUN source /opt/ros/noetic/setup.bash \
@@ -44,4 +44,4 @@ RUN echo "source /opt/ros/noetic/setup.bash && source /catkin_ws/devel/setup.bas
 WORKDIR /
 
 # Set the entry point to start the ROS launch file
-ENTRYPOINT ["/bin/bash", "-c","source webapp_entrypoint.sh"]
+ENTRYPOINT ["/bin/bash", "-c","source /entrypoints/webapp_entrypoint.sh"]
