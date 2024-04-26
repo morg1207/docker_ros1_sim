@@ -4,10 +4,10 @@ services:
   tortoisebot-roscore:
     image: osrf/ros:noetic-desktop-full-focal
     container_name: tortoisebot-roscore
-    hostname: roscore_host
+    hostname: tortoisebot-roscore
     command: roscore
     environment:
-      - ROS_HOSTNAME=roscore_host
+      - ROS_HOSTNAME=tortoisebot-roscore
     networks:
       - rosnet
     expose:
@@ -74,7 +74,7 @@ services:
     networks:
       - rosnet
     depends_on:
-      - tortoisebot-roscore
+      - tortoisebot-ros1-gazebo
     ports:
       - "7000:7000"
       - "9090:9090"
