@@ -17,8 +17,8 @@ services:
     image: tortoisebot-ros1-gazebo
     container_name: tortoisebot-ros1-gazebo_1
     build: 
-      context: ./dockerfile
-      dockerfile: dockerfile_tortoisebot_ros1_gazebo
+      context: .
+      dockerfile: ./dockerfiles/dockerfile_tortoisebot_ros1_gazebo
     environment:
       - DISPLAY
       - ROS_MASTER_URI=http://tortoisebot-roscore:11311
@@ -34,8 +34,8 @@ services:
     image: tortoisebot-ros1-slam
     container_name: tortoisebot-ros1-slam_1
     build: 
-      context: ./dockerfile
-      dockerfile: dockerfile_tortoisebot_ros1_slam
+      context: .
+      dockerfile: ./dockerfiles/dockerfile_tortoisebot_ros1_slam
     environment:
       - DISPLAY
       - ROS_MASTER_URI=http://tortoisebot-roscore:11311
@@ -51,8 +51,8 @@ services:
     image: tortoisebot-ros1-waypoints
     container_name: tortoisebot-ros1-waypoints_1
     build: 
-      context: ./dockerfile 
-      dockerfile: tortoisebot_ros1_waypoints
+      context: . 
+      dockerfile: ./dockerfiles/dockerfile_tortoisebot_ros1_waypoints
     environment:
       - DISPLAY
       - ROS_MASTER_URI=http://tortoisebot-roscore:11311
@@ -64,10 +64,10 @@ services:
 
   tortoisebot_webapp:
     image: tortoisebot-ros1-webapp
-    container_name: dockerfile_tortoisebot-ros1-webapp_1
+    container_name: tortoisebot-ros1-webapp_1
     build: 
-      context: ./dockerfile 
-      dockerfile: tortoisebot_ros1_webapp
+      context: . 
+      dockerfile: ./dockerfiles/dockerfile_tortoisebot_ros1_webapp
     environment:
       - DISPLAY
       - ROS_MASTER_URI=http://tortoisebot-roscore:11311

@@ -28,13 +28,14 @@ COPY ./tortoisebot/async_web_server_cpp /catkin_ws/src/async_web_server_cpp
 COPY ./tortoisebot/tf2_web_publisher /catkin_ws/src/tf2_web_publisher
 
 COPY ./webpage_ws /catkin_ws/src/webpage_ws
-COPY ./entrypoints /entrypoints
+
 
 # Build the Catkin workspace
 RUN source /opt/ros/noetic/setup.bash \
     && cd /catkin_ws \
     && catkin_make
 
+COPY ./entrypoints/ /entrypoints/
 ENV SLOT_ROSBRIDGE_PORT=20001
 
 # Ensure the workspace is sourced
